@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html onkeydown="jump()" onclick="jump()" ontouchstart="jump()">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="game" content="game">
+    <title>sam</title>
+   <style type="text/css" media="all">
+      *{
+        margin: 0;
+        padding: 0;
+      }
+      #load{
+        height: 100vh;
+        width: 100%;
+        position: absolute;
+        z-index: 9999;
+        background-image: url('load.gif');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      #game{
+        max-width: 720px;
+        height: 250px;
+        background-image: url('bg.jpeg') ;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid black;
+        position: relative;
+        margin: auto;
+        overflow: hidden;
+      }
+      #man{
+        height: 50px;
+        width: 40px;
+        position: absolute;
+        bottom: 0;
+        left: 50px;
+        z-index: 1;
+      }
+      .jump{
+        animation: jump .5s infinite;
+      }
+      @keyframes jump{
+        0%{bottom: 0;}
+        30%{bottom: 50px;}
+        70%{bottom: 50px;}
+        100%{bottom: 0px;}
+      }
+      #car1, #car2{
+        height: 20px;
+        width: 40px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 9999;
+      }
+      
+      #car1{
+        animation: c1 2800ms infinite linear;
+      }
+      @keyframes c1{
+        0%{left: 720px;}
+        100%{left: -40px;}
+      }
+      #car2{
+        animation: c2 4.5s infinite linear;
+      }
+      @keyframes c2{
+        0%{left: 1120px;}
+        100%{left: -40px;}
+      }
+      #tree1, #tree2{
+        height: 70px;
+        width: 50px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+      #tree1{
+        animation: t1 5s infinite linear;
+      }
+      @keyframes t1{
+        0%{left: 740px;}
+        100%{left: -40px;}
+      }
+      #tree2{
+        animation: t2 6.5s infinite linear;
+      }
+      @keyframes t2{
+        0%{left: 1100px;}
+        100%{left: -40px;}
+      }
+      
+      #rest, #scr,.m{
+        padding:5px;
+        text-align: center;
+        font-weight: 800;
+        text-decoration: none;
+        color:white;
+      }
+      .scoreboard{
+        padding:5px;
+        margin-left: 10px;
+        font-weight: 800;
+        color: brown;
+      }
+      .health{
+        width: 50%;
+        height: 20px;
+        background: yellow;
+        position: absolute;
+        border-radius: 0 5px 5px 0;
+        top:7px;
+       
+      }
+      .life{
+        width: 49%;
+        height: 16px;
+        border: 4px solid red;
+        border-radius: 0 5px 5px 0;
+        position: absolute;
+        top: 5px;
+       
+      }
+      #gOver{
+        width: 100px;
+        height: 80px;
+        position: absolute;
+        left:40%;
+        top: -120px;
+        background: brown;
+        border:3px solid green;
+        border-radius: 5px;
+        transition: 1s;
+      }
+      
+    </style> 
+  </head>
+  <body onload="myfun()">
+      <div id="load"></div>
+      <div id="game">
+     <div id="health" class="health"></div>
+        <div class="life"></div>
+        <img src="man.gif" id="man">
+        <img src="car1.png" id="car1">
+        <img src="car2.png" id="car2">
+        <img src="tree1.png" id="tree1">
+        <img src="tree2.png" id="tree2">
+        <div id="gOver">
+          <p class="m">Your score</p>
+          <div id="scr"></div>
+          <a id="rest" href="index.html">Restart</a>
+        </div>
+      </div>
+      <div class="scoreboard">
+        Score: <span id="score">0</span>
+       </div>
+       <hr />
+      
+      <script type="text/javascript" charset="utf-8">
+    //DOM selection
+      var jumpSound = new Audio("click.mp3");
+      var hitSound = new Audio("hit.wav");
+      var gameOverSound = new Audio("gOver.mp3");
+      var load = document.getElementById('load');
+      var man = document.getElementById('man');
+      var car1 = document.getElementById('car1');
+      var car2 = document.getElementById('car2');
+      var game = document.getElementById('game');
+      var healt = document.getElementById('health');
+      var rest = document.getElementById('rest');
+      var displayScore = document.getElementById('score');
+      var scr = document.getElementById('scr');
+      var gOver = document.getElementById('gOver');
+      var score = 1;
+      var damage = 1;
+      var over =  setInterval(function() {
+         score++
+        displayScore.innerHTML = score;
+        scr.innerHTML = score;
+        }, 500);
+        
+        
+    //function for loading   
+      function myfun(){
+        load.style.display = "none";
+          }  
+        
+        
+    //function for jumping
+       function jump(){
+         if(man.classList != "jump"){
+          man.classList.add("jump");
+          jumpSound.play();
+         }
+         setTimeout(function(){
+          man.classList.remove("jump");
+         },500);
+       }
+       
+       
+    //functions for property values  
+       setInterval(function(){
+         var manBottom = parseInt(window.getComputedStyle(man).getPropertyValue('bottom'));
+         var car1Left = parseInt(window.getComputedStyle(car1).getPropertyValue('left'));
+         var car2Left = parseInt(window.getComputedStyle(car2).getPropertyValue('left'));
+         
+         
+    //code for gameOver function    
+       if((car1Left < 45 && car1Left > 30 && manBottom <= 10) || (car2Left < 45 && car2Left > 30 && manBottom <= 10)){
+            damage++
+            let life = 50 - damage;
+             health.style.width = life +"%";
+             hitSound.play();
+             if(life <= 0){
+            clearInterval(over);   
+            rest.style.display="block";
+            man.style.display="none";
+            man.style.left = -50+"px"; 
+            gOver.style.top = 50+"px";
+            gameOverSound.play();
+           }
+         }
+       },1);
+        
+      </script>
+  </body>
+</html>
